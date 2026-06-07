@@ -52,6 +52,32 @@ const Login = ({ navigateTo }) => {
         <h2 className="text-center mb-10">Benvingut de nou 🍷</h2>
         <p className="text-center text-light mb-20">Inicia sessió per a poder fer comandes i gestionar el teu perfil.</p>
         
+        {/* Academic Credentials Box */}
+        <div className="academic-creds-box">
+          <strong>🔑 Comptes de proves (Accés ràpid):</strong>
+          <div className="creds-buttons mt-10">
+            <button 
+              type="button" 
+              onClick={() => { setEmail("admin@vinacoteca.com"); setPassword("123456"); }}
+              className="btn btn-outline btn-xs"
+              style={{ marginRight: "8px" }}
+            >
+              👑 Administrador
+            </button>
+            <button 
+              type="button" 
+              onClick={() => { setEmail("client@vinacoteca.com"); setPassword("123456"); }}
+              className="btn btn-outline btn-xs"
+            >
+              👥 Usuari Normal
+            </button>
+          </div>
+          <p className="creds-hint mt-10">
+            <strong>Admin:</strong> <code>admin@vinacoteca.com</code> / <code>123456</code><br />
+            <strong>Client:</strong> <code>client@vinacoteca.com</code> / <code>123456</code>
+          </p>
+        </div>
+
         {error && (
           <div className="alert alert-danger">
             <span>{error}</span>
@@ -119,6 +145,29 @@ const Login = ({ navigateTo }) => {
         .auth-footer {
           font-size: 0.9rem;
           color: var(--text-light);
+        }
+
+        .academic-creds-box {
+          background-color: #f7f3eb;
+          border: 1px solid var(--border-color);
+          padding: 16px;
+          border-radius: var(--border-radius-sm);
+          margin-bottom: 20px;
+          font-size: 0.85rem;
+        }
+
+        .btn-xs {
+          padding: 4px 10px;
+          font-size: 0.75rem;
+          border-radius: 4px;
+        }
+
+        .creds-hint {
+          font-size: 0.8rem;
+          color: var(--text-light);
+          line-height: 1.4;
+          border-top: 1px dashed var(--border-color);
+          padding-top: 10px;
         }
       `}</style>
     </main>
