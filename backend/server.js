@@ -14,9 +14,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // CORS configuration
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 app.use(cors({
-  origin: [frontendUrl, "http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
+  origin: (origin, callback) => {
+    // Permet qualsevol origen de petició per evitar bloquejos de CORS acadèmics
+    callback(null, true);
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
@@ -69,7 +71,7 @@ const startServer = async () => {
   await connectDB();
   app.listen(PORT, () => {
     console.log(`🚀 Servidor de la Vinacoteca API actiu al port ${PORT}`);
-    console.log(`📡 CORS configurat per admetre peticions de: ${frontendUrl}`);
+    console.log(`📡 CORS dinàmic actiu (permets peticions des de qualsevol origen)`);
   });
 };
 
