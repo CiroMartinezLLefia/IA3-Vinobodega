@@ -12,6 +12,21 @@ const Cart = ({ navigateTo }) => {
   const getProductImageUrl = (imagePath) => {
     if (!imagePath) return "https://placehold.co/150x150/f0e6df/5c3a21?text=Producte";
     if (imagePath.startsWith("http")) return imagePath;
+    
+    // Fallback per a rutes relatives sembrades que donen 404 a producció
+    if (imagePath.includes("tempranillo")) {
+      return "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=400";
+    }
+    if (imagePath.includes("chardonnay")) {
+      return "https://images.unsplash.com/photo-1569919650476-f54aea20054f?q=80&w=400";
+    }
+    if (imagePath.includes("ipa")) {
+      return "https://images.unsplash.com/photo-1532634922-8fe0b757fb13?q=80&w=400";
+    }
+    if (imagePath.includes("belgian")) {
+      return "https://images.unsplash.com/photo-1567696911980-2dea991b1f58?q=80&w=400";
+    }
+
     return `${API_URL}${imagePath}`;
   };
 
