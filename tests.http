@@ -1,0 +1,303 @@
+### VINACOTECA - REST Client Test Suite
+# Aquesta col·lecció s'ha d'executar en ordre.
+# Recomanat obrir amb l'extensió "REST Client" de VS Code.
+
+@baseUrl = http://localhost:5000
+@adminEmail = admin@vinacoteca.com
+@editorEmail = editor@vinacoteca.com
+@userEmail = client@vinacoteca.com
+@password = 123456
+
+# ==========================================
+# BLOC A - ACCÉS PÚBLIC
+# ==========================================
+
+### 1. Obtenir tots els productes (públic)
+# @name getProducts
+GET {{baseUrl}}/api/productes
+Accept: application/json
+
+### 2. Obtenir detall d'un producte vàlid (públic)
+# (Farem servir l'ID "p1" del fallback store)
+GET {{baseUrl}}/api/productes/p1
+Accept: application/json
+
+### 3. Obtenir detall d'un producte inexistent (retorna 404)
+GET {{baseUrl}}/api/productes/inexistent_id
+Accept: application/json
+
+### 4. Intentar crear producte sense token (retorna 401)
+POST {{baseUrl}}/api/productes
+Content-Type: application/json
+
+{
+  "name": "Vi Prohibit",
+  "description": "Sense autenticar",
+  "price": 100,
+  "type": "vino",
+  "graduacio": 12,
+  "subType": "Negre",
+  "origin": "Rioja",
+  "stock": 5
+}
+
+
+# ==========================================
+# BLOC B - REGISTRE, LOGIN I PERFIL
+# ==========================================
+
+### 5. Registrar usuari normal amb foto (multipart/form-data)
+# Nota: Si fas servir l'extensió REST Client, pots adjuntar un fitxer local.
+# Si no tens el fitxer 'avatar.jpg', el backend crearà el perfil igualment amb camps de text.
+POST {{baseUrl}}/api/auth/registro
+Content-Type: multipart/form-data; boundary=boundaryLimit
+
+--boundaryLimit
+Content-Disposition: form-data; name="name"
+
+Joan Client
+--boundaryLimit
+Content-Disposition: form-data; name="email"
+
+{{userEmail}}
+--boundaryLimit
+Content-Disposition: form-data; name="password"
+
+{{password}}
+--boundaryLimit
+Content-Disposition: form-data; name="role"
+
+usuari
+--boundaryLimit--
+
+### 6. Registrar usuari admin amb foto (multipart/form-data)
+POST {{baseUrl}}/api/auth/registro
+Content-Type: multipart/form-data; boundary=boundaryLimit
+
+--boundaryLimit
+Content-Disposition: form-data; name="name"
+
+Anna Admin
+--boundaryLimit
+Content-Disposition: form-data; name="email"
+
+{{adminEmail}}
+--boundaryLimit
+Content-Disposition: form-data; name="password"
+
+{{password}}
+--boundaryLimit
+Content-Disposition: form-data; name="role"
+
+admin
+--boundaryLimit--
+
+### 7. Registrar usuari amb email duplicat (retorna 400)
+POST {{baseUrl}}/api/auth/registro
+Content-Type: multipart/form-data; boundary=boundaryLimit
+
+--boundaryLimit
+Content-Disposition: form-data; name="name"
+
+Joan Duplicat
+--boundaryLimit
+Content-Disposition: form-data; name="email"
+
+{{userEmail}}
+--boundaryLimit
+Content-Disposition: form-data; name="password"
+
+{{password}}
+--boundaryLimit--
+
+### 8. Login correcte d'usuari normal
+# @name loginUser
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{password}}"
+}
+
+### 9. Login correcte d'usuari admin
+# @name loginAdmin
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{password}}"
+}
+
+### 10. Login amb credencials incorrectes (retorna 401)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "wrongpassword"
+}
+
+# Guarda el token del login de l'usuari normal
+@userToken = {{loginUser.response.body.token}}
+# Guarda el token del login de l'admin
+@adminToken = {{loginAdmin.response.body.token}}
+
+
+### 11. Obtenir perfil amb token vàlid (retorna 200)
+GET {{baseUrl}}/api/auth/perfil
+Authorization: Bearer {{userToken}}
+
+### 12. Obtenir perfil sense token (retorna 401)
+GET {{baseUrl}}/api/auth/perfil
+
+
+# ==========================================
+# BLOC D & H - ROLS I AUTORITZACIÓ
+# ==========================================
+
+### 13. Usuari normal intenta crear producte (retorna 403)
+POST {{baseUrl}}/api/productes
+Authorization: Bearer {{userToken}}
+Content-Type: multipart/form-data; boundary=boundaryLimit
+
+--boundaryLimit
+Content-Disposition: form-data; name="name"
+
+Negre Especial
+--boundaryLimit
+Content-Disposition: form-data; name="description"
+
+Una varietat exquisida
+--boundaryLimit
+Content-Disposition: form-data; name="price"
+
+22.5
+--boundaryLimit
+Content-Disposition: form-data; name="type"
+
+vino
+--boundaryLimit
+Content-Disposition: form-data; name="graduacio"
+
+13.5
+--boundaryLimit
+Content-Disposition: form-data; name="subType"
+
+Criança
+--boundaryLimit
+Content-Disposition: form-data; name="origin"
+
+Priorat
+--boundaryLimit
+Content-Disposition: form-data; name="stock"
+
+20
+--boundaryLimit--
+
+### 14. Admin crea un nou producte (retorna 201)
+# @name createProductAdmin
+POST {{baseUrl}}/api/productes
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=boundaryLimit
+
+--boundaryLimit
+Content-Disposition: form-data; name="name"
+
+Cervesa Artesana de Blat
+--boundaryLimit
+Content-Disposition: form-data; name="description"
+
+Cervesa de blat estil alemany molt refrescant.
+--boundaryLimit
+Content-Disposition: form-data; name="price"
+
+3.80
+--boundaryLimit
+Content-Disposition: form-data; name="type"
+
+cerveza
+--boundaryLimit
+Content-Disposition: form-data; name="graduacio"
+
+5.4
+--boundaryLimit
+Content-Disposition: form-data; name="subType"
+
+Weissbier
+--boundaryLimit
+Content-Disposition: form-data; name="origin"
+
+Baviera
+--boundaryLimit
+Content-Disposition: form-data; name="stock"
+
+50
+--boundaryLimit--
+
+@createdProductId = {{createProductAdmin.response.body._id}}
+
+### 15. Admin llista usuaris (retorna 200)
+# @name listUsers
+GET {{baseUrl}}/api/usuaris
+Authorization: Bearer {{adminToken}}
+
+### 16. Usuari normal llista usuaris (retorna 403)
+GET {{baseUrl}}/api/usuaris
+Authorization: Bearer {{userToken}}
+
+
+# ==========================================
+# BLOC E & F - COMANDES I CORREU ELECTRONIC
+# ==========================================
+
+### 17. Usuari autenticat crea comanda vàlida (retorna 201)
+# Això envia una notificació per correu al propietari!
+POST {{baseUrl}}/api/comandes
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "product": "p1",
+      "quantity": 2
+    },
+    {
+      "product": "p2",
+      "quantity": 1
+    }
+  ]
+}
+
+### 18. Crear comanda sense token (retorna 401)
+POST {{baseUrl}}/api/comandes
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "product": "p1",
+      "quantity": 1
+    }
+  ]
+}
+
+### 19. Crear comanda amb dades incorrectes o stock insuficient (retorna 400)
+POST {{baseUrl}}/api/comandes
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "product": "p1",
+      "quantity": 99999
+    }
+  ]
+}
+
+### 20. Consultar les pròpies comandes (retorna 200)
+GET {{baseUrl}}/api/comandes/me
+Authorization: Bearer {{userToken}}

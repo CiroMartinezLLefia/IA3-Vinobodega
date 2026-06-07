@@ -1,0 +1,13 @@
+{
+  "name": "vinacoteca-fullstack",
+  "version": "1.0.0",
+  "description": "Vinacoteca full-stack application root directory",
+  "scripts": {
+    "backend": "npm --prefix backend run dev",
+    "frontend": "npm --prefix frontend run dev",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

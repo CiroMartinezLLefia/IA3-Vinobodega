@@ -1,0 +1,7 @@
+node_modules/
+.env
+uploads/*
+!uploads/.gitkeep
+data_users.json
+data_products.json
+data_orders.json

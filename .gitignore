@@ -1,0 +1,36 @@
+# Dependències
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Fitxers de configuració local / Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend/.env
+frontend/.env
+
+# Persistència local de proves (fallback JSON)
+data_users.json
+data_products.json
+data_orders.json
+backend/data_users.json
+backend/data_products.json
+backend/data_orders.json
+
+# Carpetes de compilació del frontend
+frontend/dist/
+frontend/build/
+
+# Pujades d'usuaris i fitxers estàtics locals
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Editor i fitxers temporals
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
