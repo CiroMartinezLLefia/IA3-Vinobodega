@@ -293,6 +293,27 @@ const Navbar = ({ currentRoute, navigateTo }) => {
           gap: 10px;
         }
 
+        .nav-auth-buttons .btn-outline {
+          border-color: var(--accent);
+          color: var(--accent);
+          background-color: transparent;
+        }
+
+        .nav-auth-buttons .btn-outline:hover {
+          background-color: var(--accent);
+          color: var(--primary);
+        }
+
+        .nav-auth-buttons .btn-primary {
+          background-color: var(--accent);
+          color: var(--primary);
+        }
+
+        .nav-auth-buttons .btn-primary:hover {
+          background-color: var(--text-white);
+          color: var(--primary);
+        }
+
         .btn-sm {
           padding: 6px 14px;
           font-size: 0.85rem;
